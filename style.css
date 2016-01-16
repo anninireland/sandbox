@@ -1,0 +1,91 @@
+/*
+Theme Name:     Grammar Guru Theme
+Description:    Child theme for the Twenty Fifteen theme 
+Author:         Lisa Cavern 
+Template:       twentyfifteen
+Version:        1.0
+*/
+
+
+#highlighter 
+{
+	position: absolute;
+	right: 40px;
+	width: 150px;
+}
+
+.selected-words {
+	list-style-type: none;
+}
+
+.side-view {
+	border-style: solid;
+	border-width: 2px;
+	border-color: grey;
+	margin: 1em;
+	padding: 1em;
+	color: black;
+	text-align: center;
+}
+
+#article-view {
+	margin: 1em;
+	padding: 1em;
+	color: black;
+}
+#test {
+	line-height: 1.2; 
+	margin: 1em; 
+	padding: 1em; 
+	color:black;
+	background: #B79EE0;
+}
+#ggmain 
+{
+	line-height: 1.2; 
+	margin: 1em; 
+	padding: 1em; 
+	color:white;
+	background: #9EDEE0;
+}
+
+#ggmain h1
+{
+	font-size: 150%;
+}
+#ggmain h2
+{
+	font-size: 125%;
+}
+
+#ggmain span:hover
+{
+	cursor: pointer;
+}
+
+.findThis 
+{
+	color: red;
+}
+
+.highlighted
+{
+	background-color: yellow;
+}
+#results-view 
+{
+  display: none;
+  text-align: center;
+}
+
+#help-view
+{
+	display: none;
+	text-align: center;
+}
+
+.mark
+{
+	color: red;
+}
+
