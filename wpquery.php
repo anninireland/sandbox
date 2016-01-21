@@ -7,13 +7,28 @@
 
 	<?php 
 	$game = "nouns";
-	$the_text = "The enormous broad tires of the chariots and the padded feet of the animals brought forth no sound from the moss-covered sea bottom; and so we moved in utter silence, like some huge phantasmagoria, except when the stillness was broken by the guttural growling of a goaded zitidar, or the squealing of fighting thoats.";
+	$the_text = "Nutraloaf, an awful tasting, rancid looking prison 'meal', has been banned in New York.
+
+Nutraloaf made its debut as a punishment in the American prison system in the 1970s. Prisoners who threw food, utensils or even bodily fluids at guards and other inmates would see their regular prison fare replaced with the unsavoury loaf, which some find so disgusting it’s incentive enough to behave.
+
+
+“Food is very important to prisoners in a deprived and harsh environment; it is one of the very few things they have to look forward to,” explains David Fathi, director of the American Civil Liberties Union National Prison Project.
+
+The ingredients vary from state to state. Pennsylvania prison chefs invented a chickpea version, while Illinois included ground beef and applesauce in its court-contested recipe.
+
+The version in New York State prisons uses an assortment of baking staples and hard-to-overcook vegetables, including shredded carrots and unskinned potatoes.
+
+But there’s good news for prisoners in those New York prisons — they will no longer have to choke down this awful meal. On Wednesday, it was announced nutraloaf was being removed from the menu.
+
+Ongoing lawsuits regarding nutraloaf are taking place in several other states, including Illinois, Maryland, Nebraska, Pennsylvania and Washington."
+     ;
 	 ?>
 
 </head>
 <body>
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
+
 			<div id="ggmain">			
 				<h1>Grammar Guru</h1>
 				<div id="challenge-view" class="side-view">								
@@ -22,14 +37,6 @@
 					<h3>To remove it, click again</h3>
 
 					<input class="doneButton" type="button" name="done" value="I'm Done" />
-
-					<!--
-					<form action="taggerWchecker.php" method="get">
-						<input class="helpButton" type="button" value="Help!" /> 
-						<input type="hidden" name="text" value="<?php $the_text ?>">
-						<input class="doneButton" type="submit" name="done" value="I'm Done" />
-					</form>
-				-->
 
 				</div>  <!-- .challenge-view -->
 				
@@ -69,60 +76,126 @@
 							break;
 					}
 					?>
-					<form action="taggerWchecker.php" method="get" >
 						<input class="closehelpButton" type="button" value="close" />
 						<input class="doneButton" type="submit" name="done" value="I'm Done" />
-					</form>
 				</div>  <!-- .help-view -->
 
-				<div id="results-view" class="side-view">
-					<?php // if success, show "Well Done!", else show "Almost!" ?>
-					<h1>Results! </h1>
-					<h2>You selected these words: </h2>
-					<ul class="selected-words"></ul>
-					<?php // if success, show Star, else show tryagain button ?>
+				<div id="almost-view" class="side-view">
+					<h1>Nice effort!</h1>
+					<h2><span id="numCorrect"></span> correct out of 3</h2>
+					<ul class="matched-words"></ul>
+					<ul class="unmatched-words"></ul>
+					<p>You need all 3 words correct to earn a star</p>
+					<p>Would you like to try again?</p>
 					<input class="tryagainButton" type="button" value="Try Again" />
 					<a href="<?php echo $link ?>"><input class="quitButton" type="button" value="Quit" /></a>
-				</div>  <!-- .results-view -->
+				</div>  <!-- .almost-view -->
+
+
+
+				<div id="success-view" class="side-view">
+					<h1>Well Done! </h1>
+					<h2>All of your words are <?php $game ?></h2>
+					<ul class="matched-words"></ul>
+					<p>You have earned a STAR! </p>
+					<a href="<?php echo $link ?>"><input class="quitButton" type="button" value="Quit" /></a>
+				</div>  <!-- .success-view -->
+
 
 
 				<div id="article-view">
-					<h2>Princess Mars</h2>	
+					<h2>Title</h2>	
 					<div class="news-content">
-						<p><?php $the_text ?></p>
-						<p class="news-content">The enormous broad tires of the chariots and the padded feet of the animals brought forth no sound from the moss-covered sea bottom; and so we moved in utter silence, like some huge phantasmagoria, except when the stillness was broken by the guttural growling of a goaded zitidar, or the squealing of fighting thoats.</p>
+						<p class="news-content"><?php echo $the_text ?></p>
+
 					</div>
 				</div>  <!-- .article-view -->
 
 
+<?php 
 
+// process_the_content( $the_text );
+
+
+// function process_the_content( $the_text ){
+
+
+
+$sentenceArray = preg_split('/(?<=[.?!])\s+(?=[a-z])/i', $the_text);
+
+/*
+foreach ($sentenceArray as $sentence){
+	$result = explode(' ', $sentence );
+	print_r($result);
+	echo "\n";
+}
+*/
+	// for each sentence,
+	foreach ($sentenceArray as $sentence){
+		//print_r($sentence);
+
+		//echo "  exploded ===>  ";
+		$exploded = explode(' ', $sentence);
+		//print_r( $exploded);
+		//echo "            next.................. ";
+
+		$this_result = tag_the_content( $sentence ); // run the tagger
+		//print_r( $this_result);
+		//echo ".              JSON                 . ";
+		//echo json_encode( $this_result);
+
+		set_time_limit(40);
+
+		$taggedSpans = "";
+
+		// create spans with tag as class
+		foreach ($this_result as $element) {
+			set_time_limit(40);
+			$text = $element[0];
+			$tag = $element[1];
+			// if text is punctuation, do not add space 
+			$punct = array(".", ",", ";", ":", "!", "?", "(", ")", "[", "]", "{", "}", "'", "`", "\"");
+			if (in_array ( $text , $punct)){
+				$span = ("<span class=" . $tag . ">" . $text . "</span>");
+			}
+			else{
+				$span = ("<span class=" . $tag . "> " . $text . "</span>");
+			}
+			$taggedSpans .= $span; 
+		}
+		echo $taggedSpans;
+	}
+
+//	}
+
+
+function tag_the_content( $the_text ){
+
+	$time_start = microtime(true);
+	// sets DIR path variable
+	$dir = dirname(__FILE__);
+	// loads tagger
+	include($dir.'/PHP-Stanford-NLP/autoload.php');
+	// creates tagger
+	$pos = new \StanfordNLP\POSTagger(
+	  ($dir.'/PHP-Stanford-NLP/stanford-postagger-2015-04-20/models/english-left3words-distsim.tagger'),
+	($dir.'/PHP-Stanford-NLP/stanford-postagger-2015-04-20/stanford-postagger.jar')
+	);
+	// calls tagger to tag the_content 
+	// $result = $pos->tag(explode(' ', get_the_content() )); //  *** change back to this in production *** 
+
+	$result = $pos->tag(explode(' ', $the_text ));
+
+	// echo json_encode($result);
+	return $result;
+
+}
+
+?>
 
 
 			</div> <!-- .ggmain -->
 		</main><!-- .site-main -->
 	</div><!-- .content-area -->
 
-<?php 	
-/*
-if(isset($_POST['submit'])){
-	$name_entered = $_POST['name'];
-	gg_save_record(); 	
-}
-
-require_once(ABSPATH . 'wp-settings.php');
-
-	// function for saving to db -- somehow is ruuning on pageload and when form submitted. 
-function gg_save_record(){
-	
-	global $wpdb;
-	global $origin_id;
-	global $game;
-	global $name_entered;
-	$wpdb->insert($wpdb->prefix . 'gg_practice_results', 
-		array("gg_post" => $origin_id, "type" => $game, "name" => "test"),
-		array("%d", "%s", "%s"));
-	///echo "Saved!";
-}
-*/
-?>
 

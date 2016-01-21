@@ -35,7 +35,7 @@ $('.closehelpButton').click(function() {
 // When tryagain Button is clicked, show challenge, hide results 
 //    ***  - possibly clear the highlights?? 
 $('.tryagainButton').click(function() {
-  $('#results-view').hide();
+  $('#almost-view').hide();
   $('#challenge-view').show();
 })
 
@@ -56,35 +56,31 @@ $('.doneButton').click(function() {
   }
   else {
 
-
     // *** Runs the tagger *** 
 
     var url = "tagger.php";
     var callback = function(response){
 
       // when tagger is  finished
-      var posArrays = response;
+      //var posArrays = response;
       console.log("tagger is done");
-      // console.log( posArrays );
+      var tagged = response;
+      console.log( tagged );
+
+      //console.log( posArrays );
 
       // process answers into array
-      var $selectedWords = [];
+      var selectedWords = [];
+
+
       $('.highlighted').each(function() {
         var $word = $(this).text();
         var punct = [ '.', ',', ';', ':', '!', '?', '(', ')', '[', ']', '{', '}' ] ;
         if( jQuery.inArray( $word.substr(-1), punct) !== -1){ // remove punctuation 
           $word = $word.slice(0, -1);
         }
-        $selectedWords.push($word); // add word to $selectedwords array
+        selectedWords.push($word); // add word to selectedwords array
       });
-
-      // add selected words as list elements for display
-      $('.selected-words').empty(); // empties the list of selected words 
-      $.each($selectedWords, function(i, val) {
-        $('.selected-words').append('<li>' + val + '</li>');
-      })
-      // $('.doneButton').parent().hide(); // hide the current view
-      $('#results-view').show(); // show resutls view 
 
       // compare answers to pos array 
       // select pos array based on game 
@@ -96,7 +92,8 @@ $('.doneButton').click(function() {
 
       var matchedWords = [];
       var unmatchedWords = [];
-      $.each( $selectedWords, function(i, word) { // iterate over selectedwords
+
+      $.each( selectedWords, function(i, word) { // iterate over selectedwords
         if($.inArray( word, nounsArray) > -1){ // check if match found in answer array
           // match found 
           matchedWords.push(word);
@@ -107,54 +104,46 @@ $('.doneButton').click(function() {
         }
       });
 
+      $('ul.matched-words').empty();
+      $('.unmatched-words').empty();
+
+      $.each(matchedWords, function(i, val) {
+        $('.matched-words').append('<li>' + val + '</li>');
+      })
+
+      $.each(unmatchedWords, function(i, val) {
+        $('.unmatched-words').append('<li>' + val + '</li>');
+      })
+
       console.log(matchedWords);
       console.log(unmatchedWords);
 
+      var countMatched = $(matchedWords).length;
+      $('#numCorrect').empty();
+      $('#numCorrect').append(countMatched);
+
       if($(matchedWords).length == 3){
         // all correct - Yay! 
-        alert("Well Done!");
+        $('.doneButton').parent().hide(); // hide the current view
+        $('#success-view').show(); // show resutls view 
       }
       else {
-        // Not Quite! 
-        alert("Almost!");
+        // display almost view 
+        $('.doneButton').parent().hide(); // hide the current view
+        $('#almost-view').show(); // show resutls view 
       }
 
-      };
+      }; // end tagger function
 
-    }
+    } // end else for done 
 
     $.get(url, callback);
 
 
-// other formats - not all working ! 
-/*
-    var $result = jQuery.ajax( {
-      url: "tagger.php", 
-      success: function(data) {
-        console.log(data);
-        alert( data );
-      }
-    })
-    .done(function(){
-      alert( "tagger done");
-    })
-    .fail(function () {
-      alert( "fail");
-    })
-*/
-/*
-$.ajax( "tagger.php" )
-.done(function(){
-  alert( "tagger done");
-})
-.fail(function () {
-  alert( "fail");
-})
-*/
 
-});
+}); // end done function
 
 
 
 
-});
+}); // end jQuery ready function
